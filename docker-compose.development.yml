@@ -8,7 +8,7 @@ services:
     environment:
       - TZ=UTC
       - SERVICE_HOSTNAME=localhost
-      - RATE_LIMIT=1000/minute
+      - RATE_LIMIT=960/minute
       - SERVER_PORT=8080
 
       - FLASK_ENV=development
