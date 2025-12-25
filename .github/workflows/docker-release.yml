@@ -96,7 +96,7 @@ jobs:
       platforms: 'linux/amd64'
 
       push: true
-      
+
       security-scan: false
       security-fail-on: 'CRITICAL'
       generate-sbom: true
