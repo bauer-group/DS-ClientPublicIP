@@ -1,3 +1,10 @@
+## [0.1.3](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.1.2...v0.1.3) (2025-12-25)
+
+
+### Bug Fixes
+
+* disable security scan in Docker build and update version to 0.0.1 ([67eb5b3](https://github.com/bauer-group/DS-ClientPublicIP/commit/67eb5b395125900c5600e46fc9443fcb32cca77f))
+
 ## [0.1.2](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.1.1...v0.1.2) (2025-12-25)
 
 
