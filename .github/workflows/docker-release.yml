@@ -96,10 +96,9 @@ jobs:
       platforms: 'linux/amd64'
 
       push: true
-
-      # TODO: Re-enable security-scan after updating base image (bauergroup/python3-light)
-      security-scan: false
-      # security-fail-on: 'CRITICAL'
+      
+      security-scan: true
+      security-fail-on: 'CRITICAL'
       generate-sbom: true
       sync-dockerhub-readme: true
     secrets: inherit
@@ -123,6 +122,6 @@ jobs:
 
       push: false
 
-      security-scan: true
+      security-scan: false
       security-fail-on: 'CRITICAL'
     secrets: inherit
