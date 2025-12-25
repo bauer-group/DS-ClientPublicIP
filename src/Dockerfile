@@ -1,11 +1,24 @@
 FROM bauergroup/python3-light:latest
 
+# Metadata
 LABEL vendor="BAUER GROUP"
 LABEL maintainer="Karl Bauer <karl.bauer@bauer-group.com>"
 
-ENV TIME_ZONE=Etc/UTC
+# Opencontainers Metadata
+LABEL org.opencontainers.image.title="ClientPublicIP"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.vendor="BAUER GROUP"
+LABEL org.opencontainers.image.authors="Karl Bauer <karl.bauer@bauer-group.com>"
+LABEL org.opencontainers.image.source="https://github.com/bauer-group/DS-ClientPublicIP"
+LABEL org.opencontainers.image.url="https://github.com/bauer-group/DS-ClientPublicIP"
+LABEL org.opencontainers.image.documentation="https://github.com/bauer-group/DS-ClientPublicIP#readme"
+LABEL org.opencontainers.image.description="Lightweight service to detect and display public IPv4/IPv6 addresses"
+LABEL org.opencontainers.image.version="0.0.0"
 
 # === System ===
+# Set Timezone
+ENV TIME_ZONE=Etc/UTC
+
 # Disable Interactive Shell for Build
 ARG DEBIAN_FRONTEND=noninteractive
 
