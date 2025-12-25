@@ -1,0 +1,14 @@
+# [0.1.0](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.0.0...v0.1.0) (2025-12-25)
+
+
+### Bug Fixes
+
+* Ensure SERVER_PORT is an integer by casting the environment variable ([cb817c0](https://github.com/bauer-group/DS-ClientPublicIP/commit/cb817c0e8ccfb2d5a61ae9133f7a136650bf5a52))
+* Update condition checks for semantic release and Docker build jobs ([b00607a](https://github.com/bauer-group/DS-ClientPublicIP/commit/b00607a4b2146a3c3847a1276c61d4796474564d))
+* Update rate limit to 960/minute in docker-compose development configuration ([511aaba](https://github.com/bauer-group/DS-ClientPublicIP/commit/511aababcca7ab76270808898724dc718566848a))
+
+
+### Features
+
+* Add Opencontainers metadata to Dockerfile ([910d71c](https://github.com/bauer-group/DS-ClientPublicIP/commit/910d71c20e64a59469ba1070e2eaa0d7e1650983))
+* Enhance footer with powered-by link and styling ([0b0a22c](https://github.com/bauer-group/DS-ClientPublicIP/commit/0b0a22ca6134b5ec785d0a6961a063598f4673fd))
