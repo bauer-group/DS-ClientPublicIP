@@ -1,3 +1,10 @@
+## [0.1.1](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.1.0...v0.1.1) (2025-12-25)
+
+
+### Bug Fixes
+
+* fixed security scan in Docker build jobs with base image updated ([c4d912b](https://github.com/bauer-group/DS-ClientPublicIP/commit/c4d912b6c99e1c054e9ee06d037857121c864780))
+
 # [0.1.0](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.0.0...v0.1.0) (2025-12-25)
 
 
