@@ -1,0 +1,40 @@
+services:
+
+  clientpublicip-server:
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    container_name: ${STACK_NAME}_SERVER
+    environment:
+      - TZ=${TIME_ZONE}
+      - SERVICE_HOSTNAME=${SERVICE_HOSTNAME}
+      - RATE_LIMIT=${RATE_LIMIT}
+      - SERVER_PORT=8080
+    expose:
+      - 8080/tcp
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.middlewares.clientpublicip-cors.headers.accessControlAllowOriginList=*"
+
+      - "traefik.http.routers.clientpublicip-web.rule=Host(`${SERVICE_HOSTNAME}`) || Host(`v4.${SERVICE_HOSTNAME}`) || Host(`v6.${SERVICE_HOSTNAME}`)"
+      - "traefik.http.routers.clientpublicip-web.entrypoints=web"
+      - "traefik.http.routers.clientpublicip-web.middlewares=clientpublicip-cors"
+      - "traefik.http.routers.clientpublicip-web.service=clientpublicip"
+
+      - "traefik.http.routers.clientpublicip-websecure.rule=Host(`${SERVICE_HOSTNAME}`) || Host(`v4.${SERVICE_HOSTNAME}`) || Host(`v6.${SERVICE_HOSTNAME}`)"
+      - "traefik.http.routers.clientpublicip-websecure.entrypoints=web-secure"
+      - "traefik.http.routers.clientpublicip-websecure.middlewares=clientpublicip-cors"
+      - "traefik.http.routers.clientpublicip-websecure.tls=true"
+      - "traefik.http.routers.clientpublicip-websecure.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.clientpublicip-websecure.service=clientpublicip"
+
+      - "traefik.http.services.clientpublicip.loadBalancer.server.port=8080"
+    networks:
+      proxy:
+
+networks:
+  proxy:
+    name: ${PROXY_NETWORK}
+    external: true

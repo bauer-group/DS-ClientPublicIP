@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Discover your public IPv4 and IPv6 addresses instantly">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Public IP Address Lookup</title>
+    <style>
+        :root {
+            --color-bg: #0a0a0f;
+            --color-surface: #12121a;
+            --color-border: #1e1e2e;
+            --color-text: #e4e4e7;
+            --color-text-muted: #71717a;
+            --color-accent: #3b82f6;
+            --color-accent-glow: rgba(59, 130, 246, 0.15);
+            --color-success: #22c55e;
+            --color-warning: #f59e0b;
+            --color-error: #ef4444;
+            --radius: 12px;
+            --transition: 200ms ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--color-bg);
+            color: var(--color-text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--color-accent), #8b5cf6);
+            border-radius: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px var(--color-accent-glow);
+        }
+
+        .logo svg {
+            width: 32px;
+            height: 32px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--color-text-muted);
+            font-size: 0.9375rem;
+        }
+
+        .card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .ip-row {
+            display: flex;
+            align-items: center;
+            padding: 20px 24px;
+            gap: 16px;
+            transition: background var(--transition);
+        }
+
+        .ip-row:not(:last-child) {
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .ip-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .ip-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.8125rem;
+            flex-shrink: 0;
+        }
+
+        .ip-icon.v4 {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--color-success);
+        }
+
+        .ip-icon.v6 {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--color-accent);
+        }
+
+        .ip-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .ip-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        .ip-value {
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 1.0625rem;
+            font-weight: 500;
+            word-break: break-all;
+            transition: color var(--transition);
+        }
+
+        .ip-value.loading {
+            color: var(--color-text-muted);
+        }
+
+        .ip-value.error {
+            color: var(--color-error);
+            font-family: inherit;
+            font-size: 0.875rem;
+        }
+
+        .copy-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            color: var(--color-text-muted);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+            flex-shrink: 0;
+            opacity: 0;
+        }
+
+        .ip-row:hover .copy-btn {
+            opacity: 1;
+        }
+
+        .copy-btn:hover {
+            background: var(--color-border);
+            color: var(--color-text);
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        .copy-btn.copied {
+            color: var(--color-success);
+        }
+
+        .copy-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .copy-btn .hidden {
+            display: none;
+        }
+
+        footer {
+            margin-top: 32px;
+            text-align: center;
+        }
+
+        .api-links {
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .api-links a {
+            color: var(--color-text-muted);
+            text-decoration: none;
+            font-size: 0.8125rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: color var(--transition);
+        }
+
+        .api-links a:hover {
+            color: var(--color-text);
+        }
+
+        .api-links svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .powered-by {
+            color: var(--color-text-muted);
+            font-size: 0.75rem;
+        }
+
+        @media (max-width: 480px) {
+            .copy-btn {
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        .loading .ip-value {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="2" y1="12" x2="22" y2="12"/>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                </svg>
+            </div>
+            <h1>Public IP Address</h1>
+            <p class="subtitle">Your network identity on the internet</p>
+        </header>
+
+        <div class="card">
+            <div class="ip-row loading" id="ipv4-row">
+                <div class="ip-icon v4">v4</div>
+                <div class="ip-content">
+                    <div class="ip-label">IPv4 Address</div>
+                    <div class="ip-value" id="ipv4">Detecting...</div>
+                </div>
+                <button type="button" class="copy-btn" data-target="ipv4" title="Copy to clipboard" aria-label="Copy IPv4 address">
+                    <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                    <svg class="icon-check hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="ip-row loading" id="ipv6-row">
+                <div class="ip-icon v6">v6</div>
+                <div class="ip-content">
+                    <div class="ip-label">IPv6 Address</div>
+                    <div class="ip-value" id="ipv6">Detecting...</div>
+                </div>
+                <button type="button" class="copy-btn" data-target="ipv6" title="Copy to clipboard" aria-label="Copy IPv6 address">
+                    <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                    <svg class="icon-check hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <footer>
+            <div class="api-links">
+                <a href="/json">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    JSON API
+                </a>
+                <a href="/raw">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="4 17 10 11 4 5"/>
+                        <line x1="12" y1="19" x2="20" y2="19"/>
+                    </svg>
+                    Plain Text
+                </a>
+            </div>
+            <p class="powered-by">{{ SERVICE_HOSTNAME }}</p>
+        </footer>
+    </div>
+
+    <script>
+        (() => {
+            'use strict';
+
+            const CONFIG = Object.freeze({
+                hostname: '{{ SERVICE_HOSTNAME }}',
+                timeout: 8000,
+                endpoints: {
+                    ipv4: 'v4',
+                    ipv6: 'v6'
+                }
+            });
+
+            const MESSAGES = Object.freeze({
+                loading: 'Detecting...',
+                unavailable: 'Not available',
+                error: 'Connection failed'
+            });
+
+            const elements = {
+                ipv4: document.getElementById('ipv4'),
+                ipv6: document.getElementById('ipv6'),
+                ipv4Row: document.getElementById('ipv4-row'),
+                ipv6Row: document.getElementById('ipv6-row')
+            };
+
+            const fetchWithTimeout = async (url, timeout) => {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+                try {
+                    const response = await fetch(url, { signal: controller.signal });
+                    clearTimeout(timeoutId);
+                    return response;
+                } catch (error) {
+                    clearTimeout(timeoutId);
+                    throw error;
+                }
+            };
+
+            const fetchIP = async (version) => {
+                const subdomain = CONFIG.endpoints[version];
+                const url = `//${subdomain}.${CONFIG.hostname}/json`;
+                const element = elements[version];
+                const row = elements[`${version}Row`];
+
+                try {
+                    const response = await fetchWithTimeout(url, CONFIG.timeout);
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (!data.IP) {
+                        throw new Error('Invalid response');
+                    }
+
+                    element.textContent = data.IP;
+                    element.classList.remove('loading', 'error');
+                    row.classList.remove('loading');
+                } catch (error) {
+                    const isTimeout = error.name === 'AbortError';
+                    const isNetworkError = error.message === 'Failed to fetch';
+
+                    element.textContent = isNetworkError || isTimeout
+                        ? MESSAGES.unavailable
+                        : MESSAGES.error;
+                    element.classList.add('error');
+                    element.classList.remove('loading');
+                    row.classList.remove('loading');
+
+                    console.debug(`[IP Lookup] ${version.toUpperCase()}: ${error.message}`);
+                }
+            };
+
+            const copyToClipboard = async (button) => {
+                const targetId = button.dataset.target;
+                const element = elements[targetId];
+                const value = element.textContent;
+
+                if (element.classList.contains('error') || value === MESSAGES.loading) {
+                    return;
+                }
+
+                try {
+                    await navigator.clipboard.writeText(value);
+
+                    const iconCopy = button.querySelector('.icon-copy');
+                    const iconCheck = button.querySelector('.icon-check');
+
+                    iconCopy.classList.add('hidden');
+                    iconCheck.classList.remove('hidden');
+                    button.classList.add('copied');
+
+                    setTimeout(() => {
+                        iconCopy.classList.remove('hidden');
+                        iconCheck.classList.add('hidden');
+                        button.classList.remove('copied');
+                    }, 2000);
+                } catch (error) {
+                    console.error('[Clipboard] Copy failed:', error);
+                }
+            };
+
+            const init = () => {
+                fetchIP('ipv4');
+                fetchIP('ipv6');
+
+                document.querySelectorAll('.copy-btn').forEach(button => {
+                    button.addEventListener('click', () => copyToClipboard(button));
+                });
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+</body>
+</html>
