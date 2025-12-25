@@ -81,6 +81,7 @@ jobs:
     if: needs.release.outputs.release-created == 'true'
     uses: bauer-group/automation-templates/.github/workflows/docker-build.yml@main
     with:
+      deploy-environment: 'production'
       publish-to: 'both'
       ghcr-image-name: 'bauer-group/DS-ClientPublicIP/clientpublicip'
       docker-image-name: 'bauergroup/clientpublicip'
