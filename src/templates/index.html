@@ -237,6 +237,16 @@
             font-size: 0.75rem;
         }
 
+        .powered-by a {
+            color: var(--color-text-muted);
+            text-decoration: none;
+            transition: color var(--transition);
+        }
+
+        .powered-by a:hover {
+            color: var(--color-text);
+        }
+
         @media (max-width: 480px) {
             .copy-btn {
                 opacity: 1;
@@ -319,7 +329,9 @@
                     Plain Text
                 </a>
             </div>
-            <p class="powered-by">{{ SERVICE_HOSTNAME }}</p>
+            <p class="powered-by">
+                {{ SERVICE_HOSTNAME }} · <a href="https://github.com/bauer-group/DS-ClientPublicIP" target="_blank" rel="noopener">BAUER GROUP - ClientPublicIP</a>
+            </p>
         </footer>
     </div>
 
