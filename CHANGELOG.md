@@ -1,3 +1,10 @@
+# [0.3.0](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.2.0...v0.3.0) (2025-12-25)
+
+
+### Features
+
+* add refresh button and functionality to update IP addresses ([444b864](https://github.com/bauer-group/DS-ClientPublicIP/commit/444b86475419c0b2986fb150491a1b9b8b2f1a30))
+
 # [0.2.0](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.1.4...v0.2.0) (2025-12-25)
 
 
