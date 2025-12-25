@@ -1,3 +1,15 @@
+# [0.2.0](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.1.4...v0.2.0) (2025-12-25)
+
+
+### Bug Fixes
+
+* enable CORS for specific domains and update requirements ([e2d0d6e](https://github.com/bauer-group/DS-ClientPublicIP/commit/e2d0d6e3d39a6f30310eb6cffe700b8bba578169))
+
+
+### Features
+
+* add workflow for deploying releases to Coolify ([ad6de97](https://github.com/bauer-group/DS-ClientPublicIP/commit/ad6de97cb7d06e343745fe12e465eca8bd8d43d7))
+
 ## [0.1.4](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.1.3...v0.1.4) (2025-12-25)
 
 
