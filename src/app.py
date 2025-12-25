@@ -10,7 +10,7 @@ app = Flask(__name__)
 # Environment Variables
 SERVICE_HOSTNAME = os.environ.get('SERVICE_HOSTNAME', 'ip.cloudhotspot.de')
 RATE_LIMIT = os.environ.get('RATE_LIMIT', '480/minute')
-SERVER_PORT = os.environ.get('SERVER_PORT', '8080')
+SERVER_PORT = int(os.environ.get('SERVER_PORT', '8080'))
 
 # Configure the rate limiter
 rate_limiter = Limiter(
