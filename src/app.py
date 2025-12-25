@@ -1,11 +1,19 @@
 from flask import Flask, request, Response, jsonify, render_template
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_cors import CORS
 import logging
 import os
 import sys
 
 app = Flask(__name__)
+
+# Enable CORS for cross-subdomain requests (v4.*, v6.* -> main domain)
+CORS(app, origins=[
+    "https://ip.bauer-group.com",
+    "https://v4.ip.bauer-group.com",
+    "https://v6.ip.bauer-group.com"
+])
 
 # Environment Variables
 SERVICE_HOSTNAME = os.environ.get('SERVICE_HOSTNAME', 'ip.cloudhotspot.de')
