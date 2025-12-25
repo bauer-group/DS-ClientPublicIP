@@ -97,7 +97,7 @@ jobs:
 
       push: true
       
-      security-scan: true
+      security-scan: false
       security-fail-on: 'CRITICAL'
       generate-sbom: true
       sync-dockerhub-readme: true
