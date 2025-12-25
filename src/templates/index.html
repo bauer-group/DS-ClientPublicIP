@@ -43,7 +43,7 @@
 
         .container {
             width: 100%;
-            max-width: 480px;
+            max-width: 600px;
         }
 
         header {
@@ -142,10 +142,19 @@
 
         .ip-value {
             font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-            font-size: 1.0625rem;
+            font-size: 1rem;
             font-weight: 500;
-            word-break: break-all;
+            word-break: keep-all;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             transition: color var(--transition);
+        }
+
+        @media (min-width: 520px) {
+            .ip-value {
+                font-size: 1.0625rem;
+            }
         }
 
         .ip-value.loading {
@@ -247,9 +256,75 @@
             color: var(--color-text);
         }
 
-        @media (max-width: 480px) {
+        .refresh-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 24px;
+        }
+
+        .refresh-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            color: var(--color-text-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .refresh-btn:hover {
+            background: var(--color-border);
+            color: var(--color-text);
+            border-color: var(--color-text-muted);
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.98);
+        }
+
+        .refresh-btn.refreshing {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .refresh-btn.refreshing .refresh-icon {
+            animation: spin 1s linear infinite;
+        }
+
+        .refresh-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 520px) {
             .copy-btn {
                 opacity: 1;
+            }
+
+            .ip-row {
+                padding: 16px 16px;
+                gap: 12px;
+            }
+
+            .ip-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 0.75rem;
+            }
+
+            .copy-btn {
+                width: 36px;
+                height: 36px;
             }
         }
 
@@ -310,6 +385,17 @@
                     </svg>
                 </button>
             </div>
+        </div>
+
+        <div class="refresh-container">
+            <button type="button" class="refresh-btn" id="refresh-btn" title="Refresh IP addresses" aria-label="Refresh IP addresses">
+                <svg class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"/>
+                    <polyline points="1 20 1 14 7 14"/>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                </svg>
+                <span>Refresh</span>
+            </button>
         </div>
 
         <footer>
@@ -441,6 +527,26 @@
                 }
             };
 
+            const refreshIPs = async () => {
+                const refreshBtn = document.getElementById('refresh-btn');
+                refreshBtn.classList.add('refreshing');
+
+                // Reset to loading state
+                elements.ipv4.textContent = MESSAGES.loading;
+                elements.ipv6.textContent = MESSAGES.loading;
+                elements.ipv4.classList.remove('error');
+                elements.ipv6.classList.remove('error');
+                elements.ipv4.classList.add('loading');
+                elements.ipv6.classList.add('loading');
+                elements.ipv4Row.classList.add('loading');
+                elements.ipv6Row.classList.add('loading');
+
+                // Fetch both IPs
+                await Promise.all([fetchIP('ipv4'), fetchIP('ipv6')]);
+
+                refreshBtn.classList.remove('refreshing');
+            };
+
             const init = () => {
                 fetchIP('ipv4');
                 fetchIP('ipv6');
@@ -448,6 +554,8 @@
                 document.querySelectorAll('.copy-btn').forEach(button => {
                     button.addEventListener('click', () => copyToClipboard(button));
                 });
+
+                document.getElementById('refresh-btn').addEventListener('click', refreshIPs);
             };
 
             if (document.readyState === 'loading') {
