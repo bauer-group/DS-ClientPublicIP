@@ -14,6 +14,7 @@ LICENSE
 # IDE
 .vscode
 .idea
+.claude
 *.swp
 *.swo
 
@@ -48,9 +49,5 @@ docker-compose*.yml
 .DS_Store
 Thumbs.db
 
-# Claude
-.claude
-
 # Deployment configs (not needed in image)
-deploy
-Shared
+.env.example
