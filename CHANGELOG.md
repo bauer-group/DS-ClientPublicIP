@@ -1,3 +1,11 @@
+## [0.1.4](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.1.3...v0.1.4) (2025-12-25)
+
+
+### Bug Fixes
+
+* manual trigger release ([43c0698](https://github.com/bauer-group/DS-ClientPublicIP/commit/43c0698e1084e4d384e565d4a1885e2133786019))
+* remove unnecessary line break and disable security scan in Docker build ([027dac6](https://github.com/bauer-group/DS-ClientPublicIP/commit/027dac640d62d51c6c89b53e5d96fcc61cddb9d0))
+
 ## [0.1.3](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.1.2...v0.1.3) (2025-12-25)
 
 
