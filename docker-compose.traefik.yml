@@ -18,7 +18,7 @@ services:
       - geoip-data:/app/data:ro,Z
     depends_on:
       geoip-updater:
-        condition: service_completed_successfully
+        condition: service_started
         required: false
     labels:
       - "traefik.enable=true"

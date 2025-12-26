@@ -24,7 +24,7 @@ services:
       - geoip-data:/app/data:ro,Z
     depends_on:
       geoip-updater:
-        condition: service_completed_successfully
+        condition: service_started
         required: false
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:8080/raw"]
