@@ -3,3 +3,4 @@ Flask-Cors==6.0.2
 Flask-Limiter==4.1.0
 gunicorn==23.0.0
 geoip2==5.2.0
+watchdog==6.0.0
