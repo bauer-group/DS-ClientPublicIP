@@ -1,3 +1,10 @@
+## [0.4.1](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.4.0...v0.4.1) (2025-12-26)
+
+
+### Bug Fixes
+
+* update service dependency condition to 'service_started' for geoip-updater ([4e4e6bc](https://github.com/bauer-group/DS-ClientPublicIP/commit/4e4e6bcda63f15dd8f418d5b313512e1f03ca845))
+
 # [0.4.0](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.3.0...v0.4.0) (2025-12-26)
 
 
