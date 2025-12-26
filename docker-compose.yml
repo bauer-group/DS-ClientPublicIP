@@ -11,30 +11,34 @@ services:
       - SERVICE_HOSTNAME=${SERVICE_HOSTNAME}
       - RATE_LIMIT=${RATE_LIMIT}
       - SERVER_PORT=8080
+      - GEOIP_DB_PATH=/app/data/GeoLite2-Country.mmdb
     expose:
       - 8080/tcp
-    labels:
-      - "traefik.enable=true"
+    volumes:
+      - geoip-data:/app/data:ro,Z
+    depends_on:
+      geoip-updater:
+        condition: service_completed_successfully
+        required: false
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8080/raw"]
+      interval: 30s
+      timeout: 3s
+      start_period: 5s
+      retries: 3
 
-      - "traefik.http.middlewares.clientpublicip-cors.headers.accessControlAllowOriginList=*"
+  geoip-updater:
+    image: maxmindinc/geoipupdate:latest
+    container_name: ${STACK_NAME}_GEOIP_UPDATER
+    restart: unless-stopped
+    environment:
+      - GEOIPUPDATE_ACCOUNT_ID=${MAXMIND_ACCOUNT_ID}
+      - GEOIPUPDATE_LICENSE_KEY=${MAXMIND_LICENSE_KEY}
+      - GEOIPUPDATE_EDITION_IDS=GeoLite2-Country
+      - GEOIPUPDATE_FREQUENCY=${GEOIP_UPDATE_FREQUENCY:-168}
+    volumes:
+      - geoip-data:/usr/share/GeoIP:Z
 
-      - "traefik.http.routers.clientpublicip-web.rule=Host(`${SERVICE_HOSTNAME}`) || Host(`v4.${SERVICE_HOSTNAME}`) || Host(`v6.${SERVICE_HOSTNAME}`)"
-      - "traefik.http.routers.clientpublicip-web.entrypoints=web"
-      - "traefik.http.routers.clientpublicip-web.middlewares=clientpublicip-cors"
-      - "traefik.http.routers.clientpublicip-web.service=clientpublicip"
-
-      - "traefik.http.routers.clientpublicip-websecure.rule=Host(`${SERVICE_HOSTNAME}`) || Host(`v4.${SERVICE_HOSTNAME}`) || Host(`v6.${SERVICE_HOSTNAME}`)"
-      - "traefik.http.routers.clientpublicip-websecure.entrypoints=web-secure"
-      - "traefik.http.routers.clientpublicip-websecure.middlewares=clientpublicip-cors"
-      - "traefik.http.routers.clientpublicip-websecure.tls=true"
-      - "traefik.http.routers.clientpublicip-websecure.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.clientpublicip-websecure.service=clientpublicip"
-
-      - "traefik.http.services.clientpublicip.loadBalancer.server.port=8080"
-    networks:
-      proxy:
-
-networks:
-  proxy:
-    name: ${PROXY_NETWORK}
-    external: true
+volumes:
+  geoip-data:
+    name: ${STACK_NAME}_geoip_data

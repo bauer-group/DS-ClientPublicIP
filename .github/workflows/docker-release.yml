@@ -33,48 +33,20 @@ jobs:
   # ============================================
 
   validate-compose:
-    name: 🔍 Validate Docker Compose (Coolify)
+    name: 🔍 Validate Docker Compose
     uses: bauer-group/automation-templates/.github/workflows/modules-validate-compose.yml@main
     with:
-      compose-file: 'docker-compose.yml'
+      compose-files: '["docker-compose.yml", "docker-compose.traefik.yml", "docker-compose.development.yml"]'
       env-template: |
         {
-          "STACK_NAME": "ip_test",
-          "TIME_ZONE": "Etc/UTC",
-          "SERVICE_HOSTNAME": "ip.example.com",
-          "SERVER_PORT": "8080",
-          "RATE_LIMIT": "480/minute",
-          "MAXMIND_ACCOUNT_ID": "123456",
-          "MAXMIND_LICENSE_KEY": "test_license_key",
-          "GEOIP_UPDATE_FREQUENCY": "168"
-        }
-
-  validate-compose-traefik:
-    name: 🔍 Validate Docker Compose (Traefik)
-    uses: bauer-group/automation-templates/.github/workflows/modules-validate-compose.yml@main
-    with:
-      compose-file: 'docker-compose.traefik.yml'
-      env-template: |
-        {
-          "STACK_NAME": "ip_test",
-          "TIME_ZONE": "Etc/UTC",
+          "STACK_NAME": "ci_test",
+          "TIME_ZONE": "UTC",
           "PROXY_NETWORK": "EDGEPROXY",
-          "SERVICE_HOSTNAME": "ip.example.com",
+          "SERVICE_HOSTNAME": "ip.example.com",          
           "RATE_LIMIT": "480/minute",
           "MAXMIND_ACCOUNT_ID": "123456",
           "MAXMIND_LICENSE_KEY": "test_license_key",
-          "GEOIP_UPDATE_FREQUENCY": "168"
-        }
-
-  validate-compose-development:
-    name: 🔍 Validate Docker Compose (Development)
-    uses: bauer-group/automation-templates/.github/workflows/modules-validate-compose.yml@main
-    with:
-      compose-file: 'docker-compose.development.yml'
-      env-template: |
-        {
-          "MAXMIND_ACCOUNT_ID": "123456",
-          "MAXMIND_LICENSE_KEY": "test_license_key"
+          "GEOIP_UPDATE_FREQUENCY": "0"
         }
 
   validate-scripts:
@@ -90,12 +62,10 @@ jobs:
 
   release:
     name: 📦 Create Semantic Release
-    needs: [validate-compose, validate-compose-traefik, validate-compose-development, validate-scripts]
+    needs: [validate-compose, validate-scripts]
     if: |
       (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
       needs.validate-compose.result == 'success' &&
-      needs.validate-compose-traefik.result == 'success' &&
-      needs.validate-compose-development.result == 'success' &&
       needs.validate-scripts.result == 'success'
     uses: bauer-group/automation-templates/.github/workflows/modules-semantic-release.yml@main
     with:
@@ -139,12 +109,10 @@ jobs:
 
   docker-build-pr:
     name: 🔨 Validate Docker Build (PR)
-    needs: [validate-compose, validate-compose-traefik, validate-compose-development, validate-scripts]
+    needs: [validate-compose, validate-scripts]
     if: |
       github.event_name == 'pull_request' &&
       needs.validate-compose.result == 'success' &&
-      needs.validate-compose-traefik.result == 'success' &&
-      needs.validate-compose-development.result == 'success' &&
       needs.validate-scripts.result == 'success'
     uses: bauer-group/automation-templates/.github/workflows/docker-build.yml@main
     with:

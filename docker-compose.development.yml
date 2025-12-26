@@ -10,19 +10,41 @@ services:
       - SERVICE_HOSTNAME=localhost
       - RATE_LIMIT=960/minute
       - SERVER_PORT=8080
+      - GEOIP_DB_PATH=/app/data/GeoLite2-Country.mmdb
 
       - FLASK_ENV=development
       - FLASK_DEBUG=1
     expose:
-      - 8080/tcp      
+      - 8080/tcp
     ports:
       - 8080:8080/tcp
     volumes:
       - ./src/app.py:/app/app.py:ro
       - ./src/templates:/app/templates:ro
+      - geoip-data:/app/data:ro,Z
+    depends_on:
+      geoip-updater:
+        condition: service_completed_successfully
+        required: false
     healthcheck:
       test: ["CMD", "curl", "-sf", "http://localhost:8080/raw"]
       interval: 10s
       timeout: 3s
       start_period: 5s
       retries: 3
+
+  geoip-updater:
+    image: maxmindinc/geoipupdate:latest
+    container_name: clientpublicip_development_geoip_updater
+    restart: "no"
+    environment:
+      - GEOIPUPDATE_ACCOUNT_ID=${MAXMIND_ACCOUNT_ID}
+      - GEOIPUPDATE_LICENSE_KEY=${MAXMIND_LICENSE_KEY}
+      - GEOIPUPDATE_EDITION_IDS=GeoLite2-Country
+      - GEOIPUPDATE_FREQUENCY=0
+    volumes:
+      - geoip-data:/usr/share/GeoIP:Z
+
+volumes:
+  geoip-data:
+    name: clientpublicip_development_geoip_data

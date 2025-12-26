@@ -167,6 +167,24 @@
             font-size: 0.875rem;
         }
 
+        .country-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 4px;
+            font-size: 0.8125rem;
+            color: var(--color-text-muted);
+        }
+
+        .country-flag {
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        .country-name {
+            font-weight: 400;
+        }
+
         .copy-btn {
             width: 40px;
             height: 40px;
@@ -358,6 +376,7 @@
                 <div class="ip-content">
                     <div class="ip-label">IPv4 Address</div>
                     <div class="ip-value" id="ipv4">Detecting...</div>
+                    <div class="country-info" id="ipv4-country"></div>
                 </div>
                 <button type="button" class="copy-btn" data-target="ipv4" title="Copy to clipboard" aria-label="Copy IPv4 address">
                     <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -374,6 +393,7 @@
                 <div class="ip-content">
                     <div class="ip-label">IPv6 Address</div>
                     <div class="ip-value" id="ipv6">Detecting...</div>
+                    <div class="country-info" id="ipv6-country"></div>
                 </div>
                 <button type="button" class="copy-btn" data-target="ipv6" title="Copy to clipboard" aria-label="Copy IPv6 address">
                     <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -444,7 +464,27 @@
                 ipv4: document.getElementById('ipv4'),
                 ipv6: document.getElementById('ipv6'),
                 ipv4Row: document.getElementById('ipv4-row'),
-                ipv6Row: document.getElementById('ipv6-row')
+                ipv6Row: document.getElementById('ipv6-row'),
+                ipv4Country: document.getElementById('ipv4-country'),
+                ipv6Country: document.getElementById('ipv6-country')
+            };
+
+            const countryCodeToFlag = (code) => {
+                if (!code) return '';
+                const codePoints = code
+                    .toUpperCase()
+                    .split('')
+                    .map(char => 127397 + char.charCodeAt(0));
+                return String.fromCodePoint(...codePoints);
+            };
+
+            const displayCountry = (countryElement, country) => {
+                if (country && country.CODE) {
+                    const flag = countryCodeToFlag(country.CODE);
+                    countryElement.innerHTML = `<span class="country-flag">${flag}</span><span class="country-name">${country.NAME}</span>`;
+                } else {
+                    countryElement.innerHTML = '';
+                }
             };
 
             const fetchWithTimeout = async (url, timeout) => {
@@ -466,6 +506,7 @@
                 const url = `//${subdomain}.${CONFIG.hostname}/json`;
                 const element = elements[version];
                 const row = elements[`${version}Row`];
+                const countryElement = elements[`${version}Country`];
 
                 try {
                     const response = await fetchWithTimeout(url, CONFIG.timeout);
@@ -483,6 +524,7 @@
                     element.textContent = data.IP;
                     element.classList.remove('loading', 'error');
                     row.classList.remove('loading');
+                    displayCountry(countryElement, data.COUNTRY);
                 } catch (error) {
                     const isTimeout = error.name === 'AbortError';
                     const isNetworkError = error.message === 'Failed to fetch';
@@ -493,6 +535,7 @@
                     element.classList.add('error');
                     element.classList.remove('loading');
                     row.classList.remove('loading');
+                    countryElement.innerHTML = '';
 
                     console.debug(`[IP Lookup] ${version.toUpperCase()}: ${error.message}`);
                 }
@@ -540,6 +583,8 @@
                 elements.ipv6.classList.add('loading');
                 elements.ipv4Row.classList.add('loading');
                 elements.ipv6Row.classList.add('loading');
+                elements.ipv4Country.innerHTML = '';
+                elements.ipv6Country.innerHTML = '';
 
                 // Fetch both IPs
                 await Promise.all([fetchIP('ipv4'), fetchIP('ipv6')]);

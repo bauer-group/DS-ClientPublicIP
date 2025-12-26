@@ -13,7 +13,7 @@ LABEL org.opencontainers.image.source="https://github.com/bauer-group/DS-ClientP
 LABEL org.opencontainers.image.url="https://github.com/bauer-group/DS-ClientPublicIP"
 LABEL org.opencontainers.image.documentation="https://github.com/bauer-group/DS-ClientPublicIP#readme"
 LABEL org.opencontainers.image.description="Lightweight service to detect and display public IPv4/IPv6 addresses"
-LABEL org.opencontainers.image.version="0.3.0"
+LABEL org.opencontainers.image.version="0.4.0"
 
 # === System ===
 # Set Timezone
@@ -56,6 +56,10 @@ ADD requirements.txt /app/
 ADD app.py /app/
 ADD templates/ /app/templates/
 
+# Create GeoIP data directory
+RUN set -ex \
+    && mkdir -p /app/data
+
 # Fix Ownership
 RUN set -ex \
     && chown -R app:app /app
@@ -69,6 +73,7 @@ ENV FLASK_APP=app
 # Application Settings
 ENV SERVICE_HOSTNAME=ip.bauer-group.com
 ENV RATE_LIMIT=480/minute
+ENV GEOIP_DB_PATH=/app/data/GeoLite2-Country.mmdb
 
 # Prepare Environment & Install required Packages (Design Time)
 RUN set -ex \

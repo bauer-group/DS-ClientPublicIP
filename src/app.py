@@ -2,63 +2,129 @@ from flask import Flask, request, Response, jsonify, render_template
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_cors import CORS
+import geoip2.database
+import geoip2.errors
+from pathlib import Path
 import logging
 import os
 import sys
 
-app = Flask(__name__)
 
-# Enable CORS for cross-subdomain requests (v4.*, v6.* -> main domain)
-CORS(app, origins=[
-    "https://ip.bauer-group.com",
-    "https://v4.ip.bauer-group.com",
-    "https://v6.ip.bauer-group.com"
-])
+class ClientPublicIPApp:
+    """Main application class for ClientPublicIP service."""
 
-# Environment Variables
-SERVICE_HOSTNAME = os.environ.get('SERVICE_HOSTNAME', 'ip.cloudhotspot.de')
-RATE_LIMIT = os.environ.get('RATE_LIMIT', '480/minute')
-SERVER_PORT = int(os.environ.get('SERVER_PORT', '8080'))
+    def __init__(self) -> None:
+        self.flask_app = Flask(__name__)
+        self.geoip_reader: geoip2.database.Reader | None = None
 
-# Configure the rate limiter
-rate_limiter = Limiter(
-    get_remote_address,
-    app=app,       
-    default_limits=[RATE_LIMIT],
-    storage_uri="memory://",
-)
+        self._load_config()
+        self._configure_logging()
+        self._configure_cors()
+        self._configure_rate_limiter()
+        self._init_geoip()
+        self._register_routes()
 
-# Disable logging for all requests, only warnings or errors
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.WARNING)
+    def _load_config(self) -> None:
+        """Load configuration from environment variables."""
+        self.service_hostname = os.environ.get('SERVICE_HOSTNAME', 'ip.cloudhotspot.de')
+        self.rate_limit = os.environ.get('RATE_LIMIT', '480/minute')
+        self.server_port = int(os.environ.get('SERVER_PORT', '8080'))
+        self.geoip_db_path = Path(os.environ.get('GEOIP_DB_PATH', '/app/data/GeoLite2-Country.mmdb'))
 
-@app.route('/')
-@rate_limiter.limit(RATE_LIMIT)
-def index():
-    return render_template('index.html', SERVICE_HOSTNAME=SERVICE_HOSTNAME)
+    def _configure_logging(self) -> None:
+        """Configure logging to suppress request logs."""
+        log = logging.getLogger('werkzeug')
+        log.setLevel(logging.WARNING)
 
-@app.route('/json')
-@rate_limiter.limit(RATE_LIMIT)
-def get_client_ip_json():
-    return jsonify(IP=str(get_client_ip()))
+    def _configure_cors(self) -> None:
+        """Configure CORS for cross-subdomain requests."""
+        CORS(self.flask_app, origins=[
+            f"https://{self.service_hostname}",
+            f"https://v4.{self.service_hostname}",
+            f"https://v6.{self.service_hostname}",
+            f"http://{self.service_hostname}",
+            f"http://v4.{self.service_hostname}",
+            f"http://v6.{self.service_hostname}"
+        ])
 
-@app.route('/raw')
-@rate_limiter.limit(RATE_LIMIT)
-def get_client_ip_raw():
-    return Response(f'{get_client_ip()}', mimetype='text/plain')
+    def _configure_rate_limiter(self) -> None:
+        """Configure the rate limiter."""
+        self.rate_limiter = Limiter(
+            get_remote_address,
+            app=self.flask_app,
+            default_limits=[self.rate_limit],
+            storage_uri="memory://",
+        )
 
-def get_client_ip():
-    if 'X-Forwarded-For' in request.headers:
-        client_ips = request.headers.getlist('X-Forwarded-For')[0].split(',')
-        return client_ips[0].strip()
-    else:
-        return request.remote_addr
+    def _init_geoip(self) -> None:
+        """Initialize the GeoIP database reader."""
+        if self.geoip_db_path.exists():
+            try:
+                self.geoip_reader = geoip2.database.Reader(str(self.geoip_db_path))
+                self.flask_app.logger.info(f"GeoIP database loaded: {self.geoip_db_path}")
+            except Exception as e:
+                self.flask_app.logger.error(f"Failed to load GeoIP database: {e}")
+        else:
+            self.flask_app.logger.warning(f"GeoIP database not found: {self.geoip_db_path}")
 
-# Entry Point
-def isRunningWithASGIServer():
+    def _get_country_info(self, ip_address: str) -> dict[str, str] | None:
+        """Look up country information for an IP address."""
+        if not self.geoip_reader:
+            return None
+        try:
+            response = self.geoip_reader.country(ip_address)
+            return {
+                "CODE": response.country.iso_code,
+                "NAME": response.country.name
+            }
+        except (geoip2.errors.AddressNotFoundError, ValueError):
+            return None
+        except Exception:
+            return None
+
+    def _get_client_ip(self) -> str:
+        """Extract the client IP from the request."""
+        if 'X-Forwarded-For' in request.headers:
+            client_ips = request.headers.getlist('X-Forwarded-For')[0].split(',')
+            return client_ips[0].strip()
+        return request.remote_addr or ''
+
+    def _register_routes(self) -> None:
+        """Register all Flask routes."""
+
+        @self.flask_app.route('/')
+        @self.rate_limiter.limit(self.rate_limit)
+        def index() -> str:
+            return render_template('index.html', SERVICE_HOSTNAME=self.service_hostname)
+
+        @self.flask_app.route('/json')
+        @self.rate_limiter.limit(self.rate_limit)
+        def get_client_ip_json() -> Response:
+            ip = self._get_client_ip()
+            country = self._get_country_info(ip)
+            response_data: dict[str, str | dict[str, str]] = {"IP": str(ip)}
+            if country:
+                response_data["COUNTRY"] = country
+            return jsonify(response_data)
+
+        @self.flask_app.route('/raw')
+        @self.rate_limiter.limit(self.rate_limit)
+        def get_client_ip_raw() -> Response:
+            return Response(self._get_client_ip(), mimetype='text/plain')
+
+    def run(self) -> None:
+        """Run the Flask development server."""
+        self.flask_app.run(host='0.0.0.0', port=self.server_port)
+
+
+def is_running_with_wsgi_server() -> bool:
+    """Check if running under a WSGI server like Gunicorn."""
     return "gunicorn" in sys.modules
 
-if __name__ == '__main__':
-    if not isRunningWithASGIServer():
-        app.run(host='0.0.0.0', port=SERVER_PORT)
+# Create application instance
+application = ClientPublicIPApp()
+app = application.flask_app
 
+if __name__ == '__main__':
+    if not is_running_with_wsgi_server():
+        application.run()
