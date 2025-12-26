@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.3.0...v0.4.0) (2025-12-26)
+
+
+### Features
+
+* implement GeoIP country detection and update Docker configurations ([ba65630](https://github.com/bauer-group/DS-ClientPublicIP/commit/ba656302a5ecccb20bee1de31fba9e3e3a04b0cc))
+
 # [0.3.0](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.2.0...v0.3.0) (2025-12-25)
 
 
