@@ -1,3 +1,10 @@
+## [0.4.2](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.4.1...v0.4.2) (2025-12-26)
+
+
+### Bug Fixes
+
+* update docker-compose file to match multiple YAML patterns and add healthcheck for clientpublicip service ([1996795](https://github.com/bauer-group/DS-ClientPublicIP/commit/19967958c4be2202a2f5822c62b43c9e0eef0f94))
+
 ## [0.4.1](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.4.0...v0.4.1) (2025-12-26)
 
 
