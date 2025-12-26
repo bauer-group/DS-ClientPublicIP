@@ -1,3 +1,10 @@
+# [0.5.0](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.4.2...v0.5.0) (2025-12-26)
+
+
+### Features
+
+* implement GeoIP database file watcher and reload mechanism ([73fb6f3](https://github.com/bauer-group/DS-ClientPublicIP/commit/73fb6f36c41c34b1d51c1ce91d7855a6b306596a))
+
 ## [0.4.2](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.4.1...v0.4.2) (2025-12-26)
 
 
