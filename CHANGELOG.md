@@ -1,3 +1,10 @@
+## [0.5.2](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.5.1...v0.5.2) (2025-12-26)
+
+
+### Bug Fixes
+
+* improve responsive design for mobile view in index.html ([3a66d60](https://github.com/bauer-group/DS-ClientPublicIP/commit/3a66d60098cd199a22ba2a9d9248bdb43cf59802))
+
 ## [0.5.1](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.5.0...v0.5.1) (2025-12-26)
 
 
