@@ -1,3 +1,10 @@
+## [0.5.1](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.5.0...v0.5.1) (2025-12-26)
+
+
+### Bug Fixes
+
+* update geoip-updater service restart policy format ([7911206](https://github.com/bauer-group/DS-ClientPublicIP/commit/791120667e14de9678e52fb29cdd2f2233e93261))
+
 # [0.5.0](https://github.com/bauer-group/DS-ClientPublicIP/compare/v0.4.2...v0.5.0) (2025-12-26)
 
 
