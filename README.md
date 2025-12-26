@@ -66,9 +66,9 @@ Environment variables (see `.env.example`):
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `STACK_NAME` | - | Docker stack identifier (required) |
-| `SERVICE_HOSTNAME` | `ip.cloudhotspot.de` | Public hostname for the service |
+| `SERVICE_HOSTNAME` | `ip.bauer-group.com` | Public hostname for the service |
 | `RATE_LIMIT` | `480/minute` | Request rate limit per client |
-| `TIME_ZONE` | `Etc/UTC` | Container timezone |
+| `TIME_ZONE` | `UTC` | Container timezone |
 
 ### MaxMind GeoIP Settings
 
