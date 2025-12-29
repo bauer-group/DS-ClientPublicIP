@@ -1,3 +1,10 @@
+## [0.5.3](https://github.com/bauer-group/CS-ClientPublicIP/compare/v0.5.2...v0.5.3) (2025-12-29)
+
+
+### Bug Fixes
+
+* update repository references to CS-ClientPublicIP in Dockerfile, changelog, and index.html ([49c19a8](https://github.com/bauer-group/CS-ClientPublicIP/commit/49c19a87e7fb114a3584c019a026c480e483d5f0))
+
 ## [0.5.2](https://github.com/bauer-group/CS-ClientPublicIP/compare/v0.5.1...v0.5.2) (2025-12-26)
 
 
