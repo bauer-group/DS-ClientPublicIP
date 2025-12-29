@@ -86,7 +86,7 @@ jobs:
     with:
       deploy-environment: 'production'
       publish-to: 'both'
-      ghcr-image-name: 'bauer-group/DS-ClientPublicIP/clientpublicip'
+      ghcr-image-name: 'bauer-group/CS-ClientPublicIP/clientpublicip'
       docker-image-name: 'bauergroup/clientpublicip'
 
       release-version: ${{ needs.release.outputs.version }}
