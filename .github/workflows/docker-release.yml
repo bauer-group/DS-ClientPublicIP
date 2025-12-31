@@ -117,7 +117,7 @@ jobs:
     uses: bauer-group/automation-templates/.github/workflows/docker-build.yml@main
     with:
       publish-to: 'ghcr'
-      ghcr-image-name: 'bauer-group/clientpublicip'
+      ghcr-image-name: 'bauer-group/CS-ClientPublicIP/clientpublicip'
 
       auto-tags: true
       dockerfile-path: './src/Dockerfile'
