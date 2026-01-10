@@ -13,7 +13,7 @@ LABEL org.opencontainers.image.source="https://github.com/bauer-group/CS-ClientP
 LABEL org.opencontainers.image.url="https://github.com/bauer-group/CS-ClientPublicIP"
 LABEL org.opencontainers.image.documentation="https://github.com/bauer-group/CS-ClientPublicIP#readme"
 LABEL org.opencontainers.image.description="Lightweight service to detect and display public IPv4/IPv6 addresses"
-LABEL org.opencontainers.image.version="0.6.1"
+LABEL org.opencontainers.image.version="0.6.2"
 
 # === System ===
 # Set Timezone

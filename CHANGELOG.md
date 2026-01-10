@@ -1,3 +1,10 @@
+## [0.6.2](https://github.com/bauer-group/CS-ClientPublicIP/compare/v0.6.1...v0.6.2) (2026-01-10)
+
+
+### Bug Fixes
+
+* correct meta tag for mobile web app capability ([7000532](https://github.com/bauer-group/CS-ClientPublicIP/commit/70005329d60dfb6bfce3c0a7cc5e48fe40717892))
+
 ## [0.6.1](https://github.com/bauer-group/CS-ClientPublicIP/compare/v0.6.0...v0.6.1) (2026-01-10)
 
 
