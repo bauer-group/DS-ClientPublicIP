@@ -1,14 +1,15 @@
-const CACHE_NAME = 'clientpublicip';
-const OFFLINE_URL = '/offline';
+const CACHE_NAME = 'clientpublicip-v2';
 
 const PRECACHE_ASSETS = [
-    OFFLINE_URL,
+    '/',
     '/static/favicon.svg',
     '/static/icon-192.png',
-    '/static/apple-touch-icon.png'
+    '/static/icon-512.png',
+    '/static/apple-touch-icon.png',
+    '/static/manifest.webmanifest'
 ];
 
-// Install: Cache offline page and essential assets
+// Install: Cache essential assets
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -21,54 +22,39 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys()
-            .then((cacheNames) => {
-                return Promise.all(
-                    cacheNames
-                        .filter((name) => name !== CACHE_NAME)
-                        .map((name) => caches.delete(name))
-                );
-            })
+            .then((cacheNames) => Promise.all(
+                cacheNames
+                    .filter((name) => name !== CACHE_NAME)
+                    .map((name) => caches.delete(name))
+            ))
             .then(() => self.clients.claim())
     );
 });
 
-// Fetch: Network-first strategy with offline fallback
+// Fetch: Network-first with cache fallback for same-origin requests
 self.addEventListener('fetch', (event) => {
-    // Only handle navigation requests (HTML pages)
+    const url = new URL(event.request.url);
+
+    // Only handle same-origin requests
+    if (url.origin !== location.origin) {
+        return;
+    }
+
+    // For navigation requests: network-first, fall back to cached index
     if (event.request.mode === 'navigate') {
         event.respondWith(
             fetch(event.request)
-                .catch(() => {
-                    return caches.match(OFFLINE_URL);
-                })
+                .catch(() => caches.match('/'))
         );
         return;
     }
 
-    // For other requests (assets), try cache first, then network
-    if (event.request.destination === 'image' ||
-        event.request.url.includes('/static/')) {
+    // For static assets: cache-first
+    if (url.pathname.startsWith('/static/')) {
         event.respondWith(
             caches.match(event.request)
-                .then((cachedResponse) => {
-                    if (cachedResponse) {
-                        return cachedResponse;
-                    }
-                    return fetch(event.request)
-                        .then((response) => {
-                            // Cache successful responses
-                            if (response.ok) {
-                                const responseClone = response.clone();
-                                caches.open(CACHE_NAME)
-                                    .then((cache) => cache.put(event.request, responseClone));
-                            }
-                            return response;
-                        });
-                })
+                .then((cached) => cached || fetch(event.request))
         );
         return;
     }
-
-    // For API requests, just use network (no caching)
-    event.respondWith(fetch(event.request));
 });

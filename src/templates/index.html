@@ -396,9 +396,117 @@
         .loading .ip-value {
             animation: pulse 1.5s ease-in-out infinite;
         }
+
+        /* Offline Banner */
+        .offline-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.95), rgba(185, 28, 28, 0.95));
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transform: translateY(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .offline-banner.visible {
+            transform: translateY(0);
+        }
+
+        .offline-banner svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .offline-banner-text {
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .offline-banner-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        body.offline {
+            padding-top: 60px;
+        }
+
+        /* Online Toast */
+        .online-toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-120px);
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.95), rgba(22, 163, 74, 0.95));
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            padding: 12px 24px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1001;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .online-toast.visible {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .online-toast svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+        }
+
+        .online-toast-text {
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
+    <!-- Offline Banner -->
+    <div class="offline-banner" id="offline-banner" role="alert" aria-live="polite">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="1" y1="1" x2="23" y2="23"/>
+            <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+            <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+            <path d="M10.71 5.05A16 16 0 0 1 22.58 9"/>
+            <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+            <line x1="12" y1="20" x2="12.01" y2="20"/>
+        </svg>
+        <span class="offline-banner-text">No internet connection</span>
+        <div class="offline-banner-dot"></div>
+    </div>
+
+    <!-- Online Toast -->
+    <div class="online-toast" id="online-toast" role="status" aria-live="polite">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <span class="online-toast-text">Back online</span>
+    </div>
+
     <div class="container">
         <header>
             <div class="logo">
@@ -652,11 +760,49 @@
             }
         })();
 
-        // Register Service Worker for offline support
+        // Register Service Worker for PWA support
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js')
                 .catch((error) => console.debug('[SW] Registration failed:', error));
         }
+
+        // Offline Detection
+        (() => {
+            const offlineBanner = document.getElementById('offline-banner');
+            const onlineToast = document.getElementById('online-toast');
+            let wasOffline = false;
+
+            const setOfflineState = (isOffline) => {
+                if (isOffline) {
+                    offlineBanner.classList.add('visible');
+                    document.body.classList.add('offline');
+                    wasOffline = true;
+                } else {
+                    offlineBanner.classList.remove('visible');
+                    document.body.classList.remove('offline');
+
+                    // Show "back online" toast if we were offline before
+                    if (wasOffline) {
+                        onlineToast.classList.add('visible');
+                        setTimeout(() => {
+                            onlineToast.classList.remove('visible');
+                        }, 3000);
+
+                        // Auto-refresh IPs when back online
+                        document.getElementById('refresh-btn').click();
+                    }
+                }
+            };
+
+            // Listen for online/offline events
+            window.addEventListener('online', () => setOfflineState(false));
+            window.addEventListener('offline', () => setOfflineState(true));
+
+            // Check initial state
+            if (!navigator.onLine) {
+                setOfflineState(true);
+            }
+        })();
     </script>
 </body>
 </html>

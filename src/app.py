@@ -174,10 +174,6 @@ class ClientPublicIPApp:
         def get_client_ip_raw() -> Response:
             return Response(self._get_client_ip(), mimetype='text/plain')
 
-        @self.flask_app.route('/offline')
-        def offline() -> str:
-            return render_template('offline.html')
-
         @self.flask_app.route('/sw.js')
         def service_worker() -> Response:
             return send_from_directory('static', 'sw.js', mimetype='application/javascript')
