@@ -1,3 +1,10 @@
+## [0.6.3](https://github.com/bauer-group/CS-ClientPublicIP/compare/v0.6.2...v0.6.3) (2026-01-10)
+
+
+### Bug Fixes
+
+* handle offline status for IPv4 and IPv6 display ([55833f7](https://github.com/bauer-group/CS-ClientPublicIP/commit/55833f78247b134b17f456e47f506ddbfb384a4f))
+
 ## [0.6.2](https://github.com/bauer-group/CS-ClientPublicIP/compare/v0.6.1...v0.6.2) (2026-01-10)
 
 
