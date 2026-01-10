@@ -1,3 +1,16 @@
+# [0.6.0](https://github.com/bauer-group/CS-ClientPublicIP/compare/v0.5.3...v0.6.0) (2026-01-10)
+
+
+### Bug Fixes
+
+* Add service worker route and update registration path for offline support ([bf4d3ab](https://github.com/bauer-group/CS-ClientPublicIP/commit/bf4d3abcf59ea7aca25dd9fbeaa2c671cbf539f6))
+* PR Image Name ([0f3dd98](https://github.com/bauer-group/CS-ClientPublicIP/commit/0f3dd98b7756eb6c16dc8126dc26db4f8487f734))
+
+
+### Features
+
+* Add PWA support with service worker, manifest, and offline page ([f198aba](https://github.com/bauer-group/CS-ClientPublicIP/commit/f198aba02ca1c8b7f3c6c4390167ccb526d1e5ce))
+
 ## [0.5.3](https://github.com/bauer-group/CS-ClientPublicIP/compare/v0.5.2...v0.5.3) (2025-12-29)
 
 
