@@ -55,6 +55,7 @@ EXPOSE ${SERVER_PORT}/tcp
 ADD requirements.txt /app/
 ADD app.py /app/
 ADD templates/ /app/templates/
+ADD static/ /app/static/
 
 # Create GeoIP data directory
 RUN set -ex \

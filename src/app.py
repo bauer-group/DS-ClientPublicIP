@@ -174,6 +174,10 @@ class ClientPublicIPApp:
         def get_client_ip_raw() -> Response:
             return Response(self._get_client_ip(), mimetype='text/plain')
 
+        @self.flask_app.route('/offline')
+        def offline() -> str:
+            return render_template('offline.html')
+
     def run(self) -> None:
         """Run the Flask development server."""
         self.flask_app.run(host='0.0.0.0', port=self.server_port)
