@@ -770,6 +770,10 @@
         (() => {
             const offlineBanner = document.getElementById('offline-banner');
             const onlineToast = document.getElementById('online-toast');
+            const ipv4 = document.getElementById('ipv4');
+            const ipv6 = document.getElementById('ipv6');
+            const ipv4Country = document.getElementById('ipv4-country');
+            const ipv6Country = document.getElementById('ipv6-country');
             let wasOffline = false;
 
             const setOfflineState = (isOffline) => {
@@ -777,6 +781,14 @@
                     offlineBanner.classList.add('visible');
                     document.body.classList.add('offline');
                     wasOffline = true;
+
+                    // Update IP fields to show offline status
+                    ipv4.textContent = 'Offline';
+                    ipv6.textContent = 'Offline';
+                    ipv4.classList.add('error');
+                    ipv6.classList.add('error');
+                    ipv4Country.innerHTML = '';
+                    ipv6Country.innerHTML = '';
                 } else {
                     offlineBanner.classList.remove('visible');
                     document.body.classList.remove('offline');
@@ -789,6 +801,8 @@
                         }, 3000);
 
                         // Auto-refresh IPs when back online
+                        ipv4.classList.remove('error');
+                        ipv6.classList.remove('error');
                         document.getElementById('refresh-btn').click();
                     }
                 }
