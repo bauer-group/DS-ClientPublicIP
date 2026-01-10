@@ -1,4 +1,4 @@
-from flask import Flask, request, Response, jsonify, render_template
+from flask import Flask, request, Response, jsonify, render_template, send_from_directory
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_cors import CORS
@@ -177,6 +177,10 @@ class ClientPublicIPApp:
         @self.flask_app.route('/offline')
         def offline() -> str:
             return render_template('offline.html')
+
+        @self.flask_app.route('/sw.js')
+        def service_worker() -> Response:
+            return send_from_directory('static', 'sw.js', mimetype='application/javascript')
 
     def run(self) -> None:
         """Run the Flask development server."""
