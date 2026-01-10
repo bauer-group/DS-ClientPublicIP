@@ -1,3 +1,10 @@
+## [0.6.1](https://github.com/bauer-group/CS-ClientPublicIP/compare/v0.6.0...v0.6.1) (2026-01-10)
+
+
+### Bug Fixes
+
+* Remove offline route and enhance service worker for improved PWA support ([2104b3f](https://github.com/bauer-group/CS-ClientPublicIP/commit/2104b3f6b775f47ec90d36cfb7f8159c23de2995))
+
 # [0.6.0](https://github.com/bauer-group/CS-ClientPublicIP/compare/v0.5.3...v0.6.0) (2026-01-10)
 
 
